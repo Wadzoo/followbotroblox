@@ -14,7 +14,7 @@ txt_art = Fore.GREEN + """___________    .__  .__                  __________ __
      \/                                          \/"""   
      
 print(txt_art)    
-choice = input(Fore.RED +"Enter the mode(ui/ux = 1/headless=2): ")
+choice = int(input(Fore.RED +"Enter the mode(ui/ux = 1/headless=2): "))
 path = input(Fore.RED + "Enter Your User id path(add file extension at the end): ")
 
 #add your cookies here
