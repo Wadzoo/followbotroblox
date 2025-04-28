@@ -5,13 +5,17 @@ import colorama
 from colorama import Fore, Back, Style
 ids = []
 colorama.init()
-
-txt_art = Fore.GREEN + """___________    .__  .__                  __________ __   
-\_   _____/___ |  | |  |   ______  _  __ \______   \ _____/  |_ 
- |    __)/  _ \|  | |  |  /  _ \ \/ \/ /  |    |  _//  _ \   __/
- |     \(  <_> )  |_|  |_(  <_> )     /   |    |   (  <_> )  |  
- \___  / \____/|____/____/\____/ \/\_/    |______  /\____/|__|  
-     \/                                          \/"""   
+MAX_DELAY = 300
+MIN_DELAY = 20
+txt_art = Fore.GREEN + """ ____    _____   __       __       _____   __      __  ____    ____        ____     ____    ______   
+/\  _`\ /\  __`\/\ \     /\ \     /\  __`\/\ \  __/\ \/\  _`\ /\  _`\     /\  _`\  /\  _`\ /\__  _\  
+\ \ \L\_\ \ \/\ \ \ \    \ \ \    \ \ \/\ \ \ \/\ \ \ \ \ \L\_\ \ \L\ \   \ \ \L\ \\ \ \L\ \/_/\ \/  
+ \ \  _\/\ \ \ \ \ \ \  __\ \ \  __\ \ \ \ \ \ \ \ \ \ \ \  _\L\ \ ,  /    \ \  _ <'\ \  _ <' \ \ \  
+  \ \ \/  \ \ \_\ \ \ \L\ \\ \ \L\ \\ \ \_\ \ \ \_/ \_\ \ \ \L\ \ \ \\ \    \ \ \L\ \\ \ \L\ \ \ \ \ 
+   \ \_\   \ \_____\ \____/ \ \____/ \ \_____\ `\___x___/\ \____/\ \_\ \_\   \ \____/ \ \____/  \ \_/
+    \/_/    \/_____/\/___/   \/___/   \/_____/'\/__//__/  \/___/  \/_/\/ /    \/___/   \/___/    \/_/
+                                                                                                     
+                                                                                                     """
      
 print(txt_art)    
 choice = int(input(Fore.RED +"Enter the mode(ui/ux = 1/headless=2): "))
@@ -20,7 +24,19 @@ path = input(Fore.RED + "Enter Your User id path(add file extension at the end):
 #add your cookies here
 Roblo_sec = []
 
-
+def remove(path,n):
+    try:
+        with open(path, "r") as f:
+            cont = f.read()
+            
+        removed = cont[n:]
+        
+        with open(path,"w") as w:
+            w.writelines(removed)
+    
+    except Exception as e:
+        print(f"Error Occured While removing ID: {e}")
+        
 def format_list(path):
     with open(path, "r") as f:
         lines = f.read()
@@ -29,12 +45,12 @@ def format_list(path):
             ids.append(line)
             
     
-    
 def start(choice,path):
     format_list(path)
+    num_of_times = 0
     if choice == 2:
         options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
+        options.add_argument("--headless=new")
         driver = webdriver.Chrome(options=options)
         
     else:
@@ -61,12 +77,29 @@ def start(choice,path):
                     follow = driver.find_element(By.CLASS_NAME, "profile-header-dropdown-label")
                     follow.click()
                     print(F"{Fore.GREEN}Sucessfully Followed {user}")
-                    time.sleep(20)
                     
+                    num_of_times += 1
+                    with open(path,"r") as f:
+                        lin = f.read()
+                        if lin[0] == "\n":
+                            remove(path,1)
+                            remove(path,len(user))
+                        else:
+                            remove(path,len(user))
+                            
+                    time.sleep(10)
                 else:
                     print(f"{Fore.RED}Error Following {user}"
-                        f"{Fore.RED}ERR:User is banned or you are rate limited")
-                    time.sleep(20)
+                    f"{Fore.RED}ERR:User is banned or you are rate limited")
+                    time.sleep(15)
+                
+                if num_of_times == 30:
+                    print("Users Followed:", num_of_times)
+                    print("Total followers:")
+                    print(Fore.RED + f"You Now Have Been Rate Limited, Delaying for 3 minutes")
+                    time.sleep(MAX_DELAY)
+                    num_of_times = 0
+                    
                 
     except Exception as e:
         print(Fore.RED + f"ERROR: {e}")
@@ -77,4 +110,4 @@ def start(choice,path):
 
 start(choice,path)
 
-#Author: WadzooTheZombot
+#Author: WadzooTheZomb
